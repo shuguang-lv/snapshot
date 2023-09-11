@@ -10,12 +10,14 @@
   "actions": "Actions",
   "poweredBy": "Powered by",
   "results": "Results",
+  "failed": "Failed",
+  "applyChanges": "Apply changes",
   "resultsError": "Results could not be calculated. This is often due to a misconfigured strategy or an unresponsive RPC node involved in the strategy.",
   "ticketWithAnyOrBasicError": "In order to use the \"ticket\" strategy you are required to set a voting validation strategy. This combination reduces the risk of spam and sybil attacks. {article}",
   "ticketWithAnyOrBasicErrorSetup": "Use of the ticket strategy requires setting a voting validation strategy. To continue go one step back and select the \"One person, one vote\" option. {article}",
   "resultsCalculating": "Final results are being calculated. If you still see this message after a few minutes contact the space admin.",
-  "votingPowerFailedMessage": "Your voting power could not be calculated. This is often due to a misconfigured strategy or an unresponsive RPC node involved in the strategy.",
-  "votingValidationFailedMessage": "Your vote validation could not be calculated. This is often due to a misconfigured validation or an unresponsive RPC node involved in the validation.",
+  "votingPowerFailedMessage": "Your voting power could not be calculated. This is often due to a misconfigured strategy or an unresponsive RPC node involved in the strategy. If the problem persists, consider contacting the space admin or our support team on {discord}",
+  "votingValidationFailedMessage": "We were not able to validate your eligibility to vote. This is often due to a misconfigured vote validation setting or an unresponsive RPC node. If the problem persists, consider contacting the space admin or our support team on {discord}",
   "getHelp": "Get help",
   "retry": "Retry",
   "currentResults": "Current results",
@@ -192,6 +194,7 @@
     "format": "Invalid format",
     "type": "Invalid type",
     "unsupportedImageType": "File type not supported, Supported formats are jpeg, jpg and png",
+    "fileTooBig": "File size should be smaller than 1MB",
     "invalidAddress": "Invalid address"
   },
   "create": {
@@ -283,7 +286,8 @@
       "seeQueue": "See queued transactions",
       "tips": {
         "1": "Votes can be changed while the proposal is active"
-      }
+      },
+      "subscribe": "Subscribe with email"
     },
     "downloadCsvVotes": {
       "title": "Download as CSV",
@@ -293,6 +297,10 @@
           "pendingGeneration": {
             "title": "Your report is currently being generated",
             "description": "It may take a few minutes. Please check back shortly."
+          },
+          "unsupportedEnv": {
+            "title": "Unsupported environment",
+            "description": "Votes report are not available on demo."
           },
           "unknownError": {
             "title": "We're having trouble connecting to the server responsible for downloads",
@@ -343,7 +351,7 @@
     },
     "space with ticket requires voting validation": {
       "title": "Missing voting validation",
-      "message": "Your proposal cannot be submitted due to a missing Gitcoin Passport voting validation rule required with the 'ticket' strategy. Please adjust your settings by either using another strategy or adding the required validation.\n\n If further assistance is needed, contact our support team on {discord}."
+      "message": "Your proposal cannot be submitted due to a missing voting validation rule required with the 'ticket' strategy. Please adjust your settings by either using another strategy or adding the required validation.\n\n If further assistance is needed, contact our support team on {discord}."
     },
     "space missing proposal validation": {
       "title": "Missing proposal validation",
@@ -637,9 +645,12 @@
     "delegationSuccess": "Delegation successful",
     "delegationRemoved": "Delegation removed",
     "proposalCreated": "Proposal created",
+    "waitingForOtherSigners": "Waiting for other signers",
     "voteSuccessful": "Your vote is in!",
     "ensSet": "ENS text record was successfully set",
-    "transactionSent": "Transaction sent"
+    "transactionSent": "Transaction sent",
+    "emailPreferencesUpdated": "Email preferences updated",
+    "delegationAdded": "Well done. Delegate was successfully added"
   },
   "explore": {
     "createStrategy": "Create strategy",
@@ -970,6 +981,33 @@
     "yourEmail": "Your email",
     "title": "Get the latest Snapshot updates",
     "join": "Join Snapshot newsletter"
+  },
+  "emailSubscription": {
+    "title": "Email subscriptions",
+    "subscribe": "Subscribe",
+    "manage": "Manage subscriptions",
+    "description": "Subscribe to receive email notifications about your joined spaces and proposals activities.",
+    "inputCaption": "You may be asked to sign a message to verify wallet ownership",
+    "inputPlaceholder": "Your email",
+    "postSubscribeMessage": {
+      "successThanks": "Thanks for subscribing!",
+      "successConfirmation": "Please click the confirmation link that has been sent to your email."
+    }
+  },
+  "emailManagement": {
+    "title": "Subscription management",
+    "subtitle": "Choose the types of email updates that matter to you:",
+    "optionNewProposal": "Proposal creation",
+    "optionNewProposalDescription": "Get informed when a new proposal is submitted in your followed spaces.",
+    "optionClosedProposal": "Proposal closure",
+    "optionClosedProposalDescription": "Get informed when a proposal is closed in your followed spaces.",
+    "optionSummary": "Weekly summary",
+    "optionSummaryDescription": "Get a weekly report detailing the activity in your followed spaces.",
+    "updatePreferences": "Update preferences"
+  },
+  "emailResend": {
+    "title": "Verify email",
+    "description": "Email validation letter has been sent to your email address. Please click the confirmation link to complete the subscription."
   },
   "joinCommunity": "Join Snapshot community",
   "header": {

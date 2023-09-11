@@ -91,6 +91,7 @@ export const PROPOSALS_QUERY = gql`
     $author_in: [String]
     $title_contains: String
     $space_verified: Boolean
+    $flagged: Boolean
   ) {
     proposals(
       first: $first
@@ -102,6 +103,7 @@ export const PROPOSALS_QUERY = gql`
         author_in: $author_in
         title_contains: $title_contains
         space_verified: $space_verified
+        flagged: $flagged
       }
     ) {
       id
@@ -503,6 +505,22 @@ export const SPACE_QUERY = gql`
         address
         network
       }
+    }
+  }
+`;
+
+export const DELEGATE_VOTES_AND_PROPOSALS = gql`
+  query VotesAndProposals($delegates: [String]!, $space: String!) {
+    votes(first: 1000, where: { voter_in: $delegates, space: $space }) {
+      created
+      voter
+      choice
+      vp
+    }
+    proposals(first: 1000, where: { author_in: $delegates, space: $space }) {
+      created
+      author
+      title
     }
   }
 `;

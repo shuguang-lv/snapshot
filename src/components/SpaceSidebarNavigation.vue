@@ -31,15 +31,6 @@ const isLegacySpace = computed(() => {
       </BaseSidebarNavigationItem>
     </router-link>
     <router-link
-      v-slot="{ isExactActive }"
-      :to="{ name: 'spaceCreate' }"
-      data-testid="create-proposal-button"
-    >
-      <BaseSidebarNavigationItem :is-active="isExactActive">
-        {{ $t('proposals.new') }}
-      </BaseSidebarNavigationItem>
-    </router-link>
-    <router-link
       v-if="hasDelegationStrategy"
       v-slot="{ isExactActive }"
       :to="{ name: 'delegate', params: { key: space.id } }"
@@ -50,10 +41,10 @@ const isLegacySpace = computed(() => {
     </router-link>
     <router-link
       v-if="hasDelegatesSettings"
-      v-slot="{ isExactActive }"
+      v-slot="{ isActive }"
       :to="{ name: 'spaceDelegates' }"
     >
-      <BaseSidebarNavigationItem :is-active="isExactActive">
+      <BaseSidebarNavigationItem :is-active="isActive">
         {{ $t('delegates.header') }}
       </BaseSidebarNavigationItem>
     </router-link>

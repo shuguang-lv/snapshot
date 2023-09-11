@@ -15,9 +15,14 @@ async function handleFileChange(e) {
     loading.value = false;
     return;
   }
+  if (file.size > 1024 * 1024) {
+    console.log('File size exceeds 1MB');
+    loading.value = false;
+    return;
+  }
   formData.append('file', file);
   try {
-    const receipt = await pin(formData);
+    const receipt = await pin(formData, import.meta.env.VITE_PINEAPPLE_URL);
     emit('input', `ipfs://${receipt.cid}`);
     loading.value = false;
     emit('loading', loading.value);

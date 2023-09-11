@@ -31,9 +31,11 @@ const { isMessageVisible, setMessageVisibility } = useFlaggedMessageStatus(
 const proposalId: string = route.params.id as string;
 
 const modalOpen = ref(false);
+const modalEmailSubscriptionOpen = ref(false);
 const selectedChoices = ref<any>(null);
 const loadedResults = ref(false);
 const results = ref<Results | null>(null);
+const waitingForSigners = ref(false);
 
 const isAdmin = computed(() => {
   const admins = (props.space.admins || []).map(admin => admin.toLowerCase());
@@ -67,6 +69,11 @@ function clickVote() {
 
 function reloadProposal() {
   emit('reload-proposal');
+}
+
+function openPostVoteModal(isWaitingForSigners: boolean) {
+  waitingForSigners.value = isWaitingForSigners;
+  isModalPostVoteOpen.value = true;
 }
 
 async function loadResults() {
@@ -142,15 +149,34 @@ onMounted(() => setMessageVisibility(props.proposal.flagged));
             :is-admin="isAdmin"
             :is-moderator="isModerator"
           />
+          <div
+            v-if="
+              proposal?.id ===
+              '0xb356f9a8bd8aa3210b5cfb7c8c34c950aada63c1d9dc72916730e214e7d380b8'
+            "
+            class="mb-4 rounded-lg border !border-skin-link bg-skin-block-bg p-4"
+          >
+            <i-ho-exclamation-circle class="inline-block" />
+            The proposal is rejected due to an obvious mistake "Utilizing Cyber
+            Community Treasury’s unlocked CYBER to provide liquidity for
+            bridging. The foundation will try to keep 25k CYBER-ETH, 25k
+            CYBER-BSC, 25k CYBER-OP in the bridge. A total of 7,000,000
+            CYBER-BSC and 3,888,000 CYBER-ETH can be used to maintain liquidity
+            on the bridging service." Only 1,088,000 CYBER were unlocked to
+            Community Treasury so far, not the 10.888M stated here.
+          </div>
           <SpaceProposalContent :space="space" :proposal="proposal" />
         </div>
         <div class="space-y-4">
           <div v-if="proposal?.discussion" class="px-3 md:px-0">
-            <h3 v-text="$t('discussion')" />
             <BlockLink
               :link="proposal.discussion"
               data-testid="proposal-page-discussion-link"
-            />
+            >
+              <template #title>
+                <h3 v-text="$t('discussion')" />
+              </template>
+            </BlockLink>
           </div>
           <SpaceProposalVote
             v-if="proposal?.state === 'active'"
@@ -209,7 +235,7 @@ onMounted(() => setMessageVisibility(props.proposal.flagged));
       :strategies="strategies"
       @close="modalOpen = false"
       @reload="reloadProposal()"
-      @openPostVoteModal="isModalPostVoteOpen = true"
+      @openPostVoteModal="openPostVoteModal"
     />
     <ModalTerms
       :open="modalTermsOpen"
@@ -223,7 +249,14 @@ onMounted(() => setMessageVisibility(props.proposal.flagged));
       :space="space"
       :proposal="proposal"
       :selected-choices="selectedChoices"
+      :waiting-for-signers="waitingForSigners"
       @close="isModalPostVoteOpen = false"
+      @subscribeEmail="modalEmailSubscriptionOpen = true"
+    />
+    <ModalEmailSubscription
+      :open="modalEmailSubscriptionOpen"
+      :address="web3Account"
+      @close="modalEmailSubscriptionOpen = false"
     />
   </teleport>
 </template>

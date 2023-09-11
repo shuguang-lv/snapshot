@@ -3,6 +3,7 @@ import { Space, RankedSpace, ExtendedSpace } from '@/helpers/interfaces';
 
 const props = defineProps<{
   space: Space | RankedSpace | ExtendedSpace;
+  primary?: boolean;
 }>();
 
 const { isGnosisSafe } = useClient();
@@ -21,16 +22,18 @@ const canFollow = computed(() =>
     v-tippy="{
       content: isGnosisSafe ? $t('walletNotSupported') : null
     }"
+    v-bind="$attrs"
   >
     <BaseButton
       v-bind="$attrs"
       :loading="loadingFollow === space.id"
       :disabled="isGnosisSafe"
-      class="group min-w-[120px]"
+      class="group min-w-[125px]"
       :class="{
-        'hover:!border-red hover:!bg-red hover:!bg-opacity-5 hover:!text-red':
+        'flex items-center justify-center hover:!border-red hover:!bg-red hover:!bg-opacity-5 hover:!text-red':
           isFollowing
       }"
+      :primary="primary"
       @click.stop.prevent="
         loadingFollow !== ''
           ? null

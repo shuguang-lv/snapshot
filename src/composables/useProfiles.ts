@@ -1,6 +1,7 @@
 import { getEnsAddress } from '@/helpers/profile';
 import { PROFILES_QUERY } from '@/helpers/queries';
 import { Profile } from '@/helpers/interfaces';
+import { getAddress } from '@ethersproject/address';
 
 // Holds profile data (ENS name, username, about) for all addresses appearing in the frontend
 const profiles = ref<{
@@ -52,7 +53,7 @@ export function useProfiles() {
         )
       ]);
       // add ens from profilesRes to corresponding address in profilesObj
-      Object.keys(profilesRes[0]).forEach(address => {
+      Object.keys(profilesRes[0] ?? {}).forEach(address => {
         profilesRes[0][address] = {
           ...{ ens: profilesRes[0][address] },
           ...profilesRes[1]?.find(p => p.id === address)
@@ -76,10 +77,16 @@ export function useProfiles() {
     loadProfiles([address]);
   };
 
+  function getProfile(address: string) {
+    const normalizedAddress = getAddress(address);
+    return profiles.value[normalizedAddress];
+  }
+
   return {
     profiles,
     loadProfiles,
     reloadProfile,
+    getProfile,
     loadingProfiles,
     reloadingProfile,
     profilesCreated

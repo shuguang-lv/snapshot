@@ -53,7 +53,7 @@ useInfiniteScroll(
       loadMoreSpacesHome(queryInput.value);
     }
   },
-  { distance: 250, interval: 500 }
+  { distance: 500 }
 );
 
 watchDebounced(
@@ -134,7 +134,7 @@ onMounted(() => {
                   })
                 }}
               </div>
-              <ButtonFollow class="!mb-0" :space="space" />
+              <ButtonFollow :space="space" class="mx-auto" />
             </BaseBlock>
           </router-link>
         </div>

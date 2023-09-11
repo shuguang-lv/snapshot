@@ -138,7 +138,8 @@ async function handleSubmit() {
   const result = await send(props.space, 'settings', prunedForm.value);
   console.log('Result', result);
   if (result.id) {
-    notify(['green', t('notify.saved')]);
+    if (!result.ipfs) notify(['green', t('notify.waitingForOtherSigners')]);
+    else notify(['green', t('notify.saved')]);
     if (!modalSettingsSavedIgnore.value) modalSettingsSavedOpen.value = true;
     resetTreasuryAssets();
     await clearStampCache(props.space.id);
@@ -264,6 +265,7 @@ const isViewOnly = computed(() => {
               context="settings"
               :space="space"
               :is-space-controller="isSpaceController"
+              :is-space-admin="isSpaceAdmin"
             />
           </template>
 
@@ -371,16 +373,13 @@ const isViewOnly = computed(() => {
         </p>
       </div>
     </ModalConfirmAction>
-    <ModalConfirmAction
+    <ModalConfirmLeave
       :open="isConfirmLeaveOpen"
       show-cancel
       @close="cancelLeave"
-      @confirm="confirmLeave(true)"
-    >
-      <BaseMessageBlock level="warning" class="m-4">
-        {{ $t('settings.confirmLeaveMessage') }}
-      </BaseMessageBlock>
-    </ModalConfirmAction>
+      @save="handleSubmit"
+      @leave="confirmLeave(true)"
+    />
     <ModalConfirmAction
       :open="isConfirmDeleteOpen"
       :disabled="modalDeleteSpaceConfirmation !== space.id"

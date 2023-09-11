@@ -7,6 +7,7 @@ import visualizer from 'rollup-plugin-visualizer';
 import Icons from 'unplugin-icons/vite';
 import IconsResolver from 'unplugin-icons/resolver';
 import { FileSystemIconLoader } from 'unplugin-icons/loaders';
+import { sentryVitePlugin } from '@sentry/vite-plugin';
 import AutoImport from 'unplugin-auto-import/vite';
 
 export default defineConfig({
@@ -51,6 +52,13 @@ export default defineConfig({
           svg.replace(/^<svg /, '<svg fill="currentColor" ')
         )
       }
+    }),
+    // Put the Sentry vite plugin after all other plugins
+    sentryVitePlugin({
+      org: process.env.SENTRY_ORG,
+      project: 'snapshot',
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+      disable: process.env.VITE_ENV !== 'production'
     })
   ],
   resolve: {
@@ -65,6 +73,15 @@ export default defineConfig({
     },
     deps: {
       inline: ['@pusher/push-notifications-web']
+    }
+  },
+  build: {
+    sourcemap: process.env.VITE_ENV === 'production',
+    target: 'esnext' // you can also use 'es2020' here
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      target: 'esnext'
     }
   }
 });

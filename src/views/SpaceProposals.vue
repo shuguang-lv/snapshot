@@ -39,9 +39,12 @@ const { emitUpdateLastSeenProposal } = useUnseenProposals();
 const { profiles, loadProfiles } = useProfiles();
 const { apolloQuery } = useApolloQuery();
 const { web3Account } = useWeb3();
+const { isFollowing } = useFollowSpace(props.space.id);
 
 const spaceMembers = computed(() =>
-  props.space.members.length < 1 ? ['none'] : props.space.members
+  props.space.members.length < 1
+    ? ['none']
+    : [...props.space.members, ...props.space.moderators, ...props.space.admins]
 );
 
 const subSpaces = computed(
@@ -57,7 +60,9 @@ const spaceProposals = computed(() => {
 });
 
 const stateFilter = computed(() => route.query.state || 'all');
-const titleFilter = computed(() => route.query.q || '');
+const titleSearch = computed(() => route.query.q || '');
+const showOnlyCore = computed(() => (route.query.onlyCore as string) || '0');
+const showFlagged = computed(() => (route.query.showFlagged as string) || '0');
 
 async function getProposals(skip = 0) {
   return apolloQuery(
@@ -67,9 +72,10 @@ async function getProposals(skip = 0) {
         first: loadBy,
         skip,
         space_in: [props.space.id, ...subSpaces.value],
-        state: stateFilter.value === 'core' ? 'all' : stateFilter.value,
-        author_in: stateFilter.value === 'core' ? spaceMembers.value : [],
-        title_contains: titleFilter.value
+        state: stateFilter.value,
+        author_in: showOnlyCore.value === '1' ? spaceMembers.value : [],
+        title_contains: titleSearch.value,
+        flagged: showFlagged.value === '0' ? false : undefined
       }
     },
     'proposals'
@@ -103,13 +109,17 @@ async function loadProposals() {
   loading.value = false;
 }
 
-watch(stateFilter, () => {
-  resetSpaceProposals();
-  loadProposals();
-});
+watch(
+  [stateFilter, showOnlyCore, showFlagged],
+  () => {
+    resetSpaceProposals();
+    loadProposals();
+  },
+  { immediate: true }
+);
 
 watchDebounced(
-  titleFilter,
+  titleSearch,
   () => {
     resetSpaceProposals();
     loadProposals();
@@ -120,8 +130,6 @@ watchDebounced(
 watch(spaceProposals, () => {
   loadProfiles(spaceProposals.value.map((proposal: any) => proposal.author));
 });
-
-onMounted(() => loadProposals());
 </script>
 
 <template>
@@ -130,33 +138,35 @@ onMounted(() => loadProposals());
       <SpaceSidebar :space="space" />
     </template>
     <template #content-right>
-      <BaseBlock v-if="space.about && stateFilter == 'all'" class="mb-3">
-        <TextAutolinker :text="space.about" />
-      </BaseBlock>
-      <div class="relative mb-3 flex px-3 md:px-0">
-        <div class="hidden flex-auto md:flex">
-          <div class="flex flex-auto items-center">
-            <h2>
-              {{ $t('proposals.header') }}
-            </h2>
-          </div>
-        </div>
-        <SpaceProposalsMenuFilter />
-
+      <div class="relative">
         <SpaceProposalsNotice
           v-if="spaceProposals.length < 1 && !loading"
           :space-id="space.id"
         />
       </div>
 
+      <h1 class="hidden lg:mb-3 lg:block">
+        {{ $t('proposals.header') }}
+      </h1>
+
+      <div
+        class="mb-4 flex flex-col justify-between gap-x-3 gap-y-[10px] px-[20px] sm:flex-row md:px-0"
+      >
+        <SpaceProposalsSearch />
+        <BaseLink
+          :link="{ name: 'spaceCreate' }"
+          data-testid="create-proposal-button"
+        >
+          <BaseButton :primary="isFollowing" class="w-full sm:w-auto">
+            New proposal
+          </BaseButton>
+        </BaseLink>
+      </div>
+
       <LoadingRow v-if="loading" block />
 
-      <SpaceProposalsNoProposals
-        v-else-if="spaceProposals.length < 1"
-        class="mt-2"
-        :space="space"
-      />
-      <div v-else class="mb-4 space-y-4">
+      <BaseNoResults v-else-if="spaceProposals.length < 1" />
+      <div v-else class="mb-3 space-y-3">
         <template v-for="(proposal, i) in spaceProposals" :key="i">
           <BaseBlock slim class="transition-colors">
             <ProposalsItem

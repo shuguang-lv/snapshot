@@ -30,19 +30,12 @@ watchEffect(() => {
 
 <template>
   <div
-    class="relative block px-4 pt-4 text-center md:flex lg:block lg:px-0 lg:pt-0"
+    class="relative block px-[20px] text-center md:flex md:px-3 md:pt-3 lg:block lg:pb-[24px]"
   >
-    <div class="flex lg:block">
-      <AvatarSpace
-        :space="space"
-        symbol-index="space"
-        size="80"
-        class="lg:my-3"
-      />
-      <div
-        class="mx-3 flex flex-col justify-center truncate text-left lg:block lg:text-center"
-      >
-        <h3 class="mb-[2px] flex items-center lg:justify-center">
+    <div>
+      <AvatarSpace :space="space" symbol-index="space" size="48" class="mr-3" />
+      <div class="mt-2 truncate text-left">
+        <h3 class="my-0 flex items-center text-2xl leading-[44px] lg:text-lg">
           <div
             v-tippy="{
               content: space.name.length > 16 ? space.name : null
@@ -53,7 +46,7 @@ watchEffect(() => {
           </div>
           <IconVerifiedSpace v-if="space.verified" />
         </h3>
-        <div class="mb-[12px] text-skin-text">
+        <div class="text-md text-skin-text lg:text-base">
           {{
             $tc('members', space.followersCount, {
               count: formatCompactNumber(space.followersCount)
@@ -64,12 +57,17 @@ watchEffect(() => {
     </div>
 
     <div
-      class="flex flex-grow items-start justify-end gap-x-2 lg:mb-4 lg:justify-center"
+      class="mt-3 flex w-full items-end justify-end gap-[12px] md:mt-0 lg:mt-[12px]"
     >
-      <ButtonFollow :space="space" :primary="!isFollowing" />
-      <BaseButton
+      <ButtonFollow
+        :space="space"
+        :primary="!isFollowing"
+        block
+        class="w-full md:max-w-[180px] lg:max-w-none"
+      />
+      <BaseButtonRound
         v-if="isFollowing"
-        class="inline"
+        class="inline shrink-0"
         @click="toggleSubscription()"
       >
         <LoadingSpinner v-if="loading" />
@@ -79,7 +77,11 @@ watchEffect(() => {
           class="text-skin-link"
           :name="notificationIcon"
         />
-      </BaseButton>
+      </BaseButtonRound>
+
+      <BaseButtonRound class="inline shrink-0 lg:hidden">
+        <SpaceSidebarMenuThreeDot class="" />
+      </BaseButtonRound>
     </div>
   </div>
 </template>
